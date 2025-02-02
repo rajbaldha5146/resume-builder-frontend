@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Add useParams
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { backend_url } from '../server';
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import MyDocument from "../components/MyDocument";
 import Template1 from "../components/Template1";
@@ -64,7 +65,7 @@ const ResumeBuilder = () => {
         const fetchResume = async () => {
             try {
                 console.log("Fetching resume with ID:", id); // Debugging log
-                const res = await axios.get(`/api/resumes/${id}`, {
+                const res = await axios.get(`${backend_url}/api/resumes/${id}`, {
                     headers: {
                         "x-auth-token": localStorage.getItem("token"),
                     },
@@ -87,7 +88,7 @@ const ResumeBuilder = () => {
   const getAIFeedback = async (content) => {
     try {
       const res = await axios.post(
-        "/api/ai/feedback",
+        `${backend_url}/api/ai/feedback`,
         { content },
         {
           headers: {
@@ -121,7 +122,7 @@ const ResumeBuilder = () => {
         }
     
         try {
-            const url = id ? `/api/resumes/${id}` : "/api/resumes"; // Use PUT for update, POST for create
+            const url = id ? `${backend_url}/api/resumes/${id}` : `${backend_url}/api/resumes`; // Use PUT for update, POST for create
             const method = id ? "put" : "post";
             
             const res = await axios({

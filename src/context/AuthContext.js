@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { backend_url } from '../server';
 
 const AuthContext = createContext();
 
@@ -21,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     // Login function
     const login = async (email, password, navigate) => {
         try {
-            const res = await axios.post('/api/auth/login', { email, password });
+            const res = await axios.post(`${backend_url}/api/auth/login`, { email, password });
             setToken(res.data.token);
             setUser(res.data.user); // Ensure user is set here
             console.log('User after login:', res.data.user); // Add this line
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     
     const signup = async (name, email, password, navigate) => {
         try {
-            const res = await axios.post('/api/auth/signup', { name, email, password });
+            const res = await axios.post(`${backend_url}//api/auth/signup`, { name, email, password });
             setToken(res.data.token);
             setUser(res.data.user); // Ensure user is set here
             navigate('/dashboard'); // Redirect to dashboard after signup

@@ -5,6 +5,7 @@ import axios from 'axios';
 import { PDFDownloadLink } from '@react-pdf/renderer'; // Add PDFDownloadLink
 import Template1 from '../components/Template1'; // Import templates
 import Template2 from '../components/Template2';
+import { backend_url } from '../server';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -16,7 +17,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchResumes = async () => {
             try {
-                const res = await axios.get('/api/resumes', {
+                const res = await axios.get(`${backend_url}/api/resumes`, {
                     headers: {
                         'x-auth-token': localStorage.getItem('token'),
                     },

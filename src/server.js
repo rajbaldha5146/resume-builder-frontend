@@ -1,0 +1,1 @@
+export const backend_url = "https://resume-builder-backend-1-ad45.onrender.com";
