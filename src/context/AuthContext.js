@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     
     const signup = async (name, email, password, navigate) => {
         try {
-            const res = await axios.post(`${backend_url}//api/auth/signup`, { name, email, password });
+            const res = await axios.post(`${backend_url}/api/auth/signup`, { name, email, password });
             setToken(res.data.token);
             setUser(res.data.user); // Ensure user is set here
             navigate('/dashboard'); // Redirect to dashboard after signup
