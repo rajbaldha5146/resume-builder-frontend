@@ -89,7 +89,7 @@ const Login = () => {
             </main>
 
             <footer className="footer">
-                <p>&copy; 2023 ResumeGenius. All rights reserved.</p>
+                <p>&copy; 2025 ResumeGenius. All rights reserved.</p>
             </footer>
         </div>
     );

@@ -39,6 +39,19 @@ const Signup = () => {
 
             <main className="main-content">
                 <h1 className="main-title">Sign Up</h1>
+
+                {/* Display errors */}
+                {errors.length > 0 && (
+                    <div className="error-messages">
+                        <ul>
+                            {errors.map((error, index) => (
+                                <li key={index}>{error.msg || error.message}</li> // Handle both 'msg' and 'message'
+                            ))}
+                        </ul>
+                    </div>
+                )}
+
+
                 <form onSubmit={handleSubmit} className="signup-form">
                     <input
                         type="text"
@@ -65,13 +78,11 @@ const Signup = () => {
                         {loading ? <div className="loader"></div> : 'Sign Up'}
                     </button>
                 </form>
-                <p className="login-link">
-                    Already have an account? <a href="/login">Login</a>
-                </p>
+                {/* ... rest of the content ... */}
             </main>
 
             <footer className="footer">
-                <p>&copy; 2023 ResumeGenius. All rights reserved.</p>
+                <p>&copy; 2025 ResumeGenius. All rights reserved.</p>
             </footer>
         </div>
     );
