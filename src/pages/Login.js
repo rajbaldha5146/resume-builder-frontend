@@ -16,7 +16,7 @@ const Login = () => {
         e.preventDefault();
         setLoading(true); // Show loader
         try {
-            console.log('Login request:', { email, password });
+            // console.log('Login request:', { email, password });
             await login(email, password, navigate);
             // Show success toast
             toast.success('Login successful! Redirecting to dashboard...', {

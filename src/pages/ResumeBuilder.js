@@ -87,13 +87,13 @@ const ResumeBuilder = () => {
     if (id) {
       const fetchResume = async () => {
         try {
-          console.log("Fetching resume with ID:", id);
+          // console.log("Fetching resume with ID:", id);
           const res = await axios.get(`${backend_url}/api/resumes/${id}`, {
             headers: {
               "x-auth-token": localStorage.getItem("token"),
             },
           });
-          console.log("Resume data fetched:", res.data);
+          // console.log("Resume data fetched:", res.data);
           setResume(res.data.sections);
           setSelectedTemplate(res.data.templateId);
         } catch (err) {
@@ -162,7 +162,7 @@ const ResumeBuilder = () => {
         },
       });
 
-      console.log("Resume saved:", res.data);
+      // console.log("Resume saved:", res.data);
       navigate("/dashboard");
     } catch (err) {
       console.error(

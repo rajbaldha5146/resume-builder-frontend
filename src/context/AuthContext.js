@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
             const res = await axios.post(`${backend_url}/api/auth/login`, { email, password });
             setToken(res.data.token);
             setUser(res.data.user); // Ensure user is set here
-            console.log('User after login:', res.data.user); // Add this line
+            // console.log('User after login:', res.data.user); // Add this line
             navigate('/dashboard');
         } catch (err) {
             console.error('Login error:', err.response?.data?.msg || err.message);
