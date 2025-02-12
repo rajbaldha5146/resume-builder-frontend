@@ -8,13 +8,15 @@ import './Login.css';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false); // Loading state
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Show loader
         try {
-            console.log('Login request:', { email, password }); 
+            console.log('Login request:', { email, password });
             await login(email, password, navigate);
             // Show success toast
             toast.success('Login successful! Redirecting to dashboard...', {
@@ -27,9 +29,13 @@ const Login = () => {
                 progress: undefined,
             });
             // Redirect to dashboard after 2 seconds
-            setTimeout(() => navigate('/dashboard'), 2000);
+            setTimeout(() => {
+                setLoading(false); // Hide loader
+                navigate('/dashboard');
+            }, 2000);
         } catch (err) {
             console.error('Login error:', err);
+            setLoading(false); // Hide loader in case of error
             // Show error toast
             toast.error('Login failed. Please check your email and password.', {
                 position: "top-center",
@@ -49,7 +55,7 @@ const Login = () => {
             <ToastContainer />
             <header className="header">
                 <div className="logo">
-                <a href="/" className="logo" style={{ textDecoration: 'none' }}>ResumeGenius</a>    
+                    <a href="/" className="logo" style={{ textDecoration: 'none' }}>ResumeGenius</a>
                 </div>
                 <nav className="nav">
                     <a href="/signup" className="nav-link">Sign Up</a>
@@ -73,7 +79,9 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    <button type="submit" className="submit-button">Login</button>
+                    <button type="submit" className="submit-button" disabled={loading}>
+                        {loading ? <div className="loader"></div> : 'Login'}
+                    </button>
                 </form>
                 <p className="signup-link">
                     Don't have an account? <a href="/signup">Sign Up</a>

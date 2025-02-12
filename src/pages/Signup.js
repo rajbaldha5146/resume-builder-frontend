@@ -7,15 +7,22 @@ const Signup = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false); // Loading state
     const { signup } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Show loader
         try {
-            await signup(name, email, password, navigate); // Pass navigate here
+            await signup(name, email, password, navigate);
+            setTimeout(() => {
+                setLoading(false); // Hide loader
+                navigate('/login'); // Redirect to login page
+            }, 2000); // Simulate a 2-second delay
         } catch (err) {
             console.error('Signup error:', err);
+            setLoading(false); // Hide loader in case of error
         }
     };
 
@@ -23,7 +30,7 @@ const Signup = () => {
         <div className="signup-container">
             <header className="header">
                 <div className="logo">
-                <a href="/" className="logo" style={{ textDecoration: 'none' }}>ResumeGenius</a>
+                    <a href="/" className="logo" style={{ textDecoration: 'none' }}>ResumeGenius</a>
                 </div>
                 <nav className="nav">
                     <a href="/login" className="nav-link">Login</a>
@@ -54,7 +61,9 @@ const Signup = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
-                    <button type="submit" className="submit-button">Sign Up</button>
+                    <button type="submit" className="submit-button" disabled={loading}>
+                        {loading ? <div className="loader"></div> : 'Sign Up'}
+                    </button>
                 </form>
                 <p className="login-link">
                     Already have an account? <a href="/login">Login</a>
