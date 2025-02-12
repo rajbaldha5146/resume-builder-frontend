@@ -8,12 +8,15 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false); // Loading state
+    const [errors, setErrors] = useState([]); // Store errors from backend
     const { signup } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); // Show loader
+        setErrors([]); // Clear previous errors
+
         try {
             await signup(name, email, password, navigate);
             setTimeout(() => {
@@ -21,8 +24,19 @@ const Signup = () => {
                 navigate('/login'); // Redirect to login page
             }, 2000); // Simulate a 2-second delay
         } catch (err) {
-            console.error('Signup error:', err);
-            setLoading(false); // Hide loader in case of error
+            // console.error('Signup error:', err);
+            setLoading(false);
+
+            if (err.response && err.response.data && err.response.data.errors) {
+                // Backend validation errors
+                setErrors(err.response.data.errors);  // Assuming backend sends errors in this format
+            } else if (err.response && err.response.data && err.response.data.msg) {
+                // Other backend error (e.g., "User already exists")
+                setErrors([{ msg: err.response.data.msg }]); // Wrap it in an array for consistent rendering
+            } else {
+                // Generic error message (e.g., network error)
+                setErrors([{ msg: 'An error occurred during signup.' }]);
+            }
         }
     };
 
