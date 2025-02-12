@@ -254,3 +254,33 @@ textarea {
     border-color: #1a237e;
     transform: translateY(-2px);
 } 
+
+.experience-header,
+.education-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.experience-header input,
+.education-header input {
+  flex: 1;
+}
+
+.remove-button {
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.remove-button:hover {
+  background-color: #cc0000;
+}

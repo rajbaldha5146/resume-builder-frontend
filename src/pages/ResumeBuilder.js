@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Add useParams
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import { backend_url } from '../server';
+import { backend_url } from "../server";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import MyDocument from "../components/MyDocument";
 import Template1 from "../components/Template1";
@@ -18,6 +18,7 @@ const ResumeBuilder = () => {
 
   // Add template selection state
   const [selectedTemplate, setSelectedTemplate] = useState("template1");
+  const [pdfKey, setPdfKey] = useState(0); // Add this for PDF refresh
 
   // State for resume data
   const [resume, setResume] = useState({
@@ -35,19 +36,41 @@ const ResumeBuilder = () => {
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [feedbackError, setFeedbackError] = useState("");
 
-  // Function to get the selected template component
-  const renderTemplate = () => {
-    const props = { resume };
+    // Function to get the selected template component with error handling
+    const renderTemplate = () => {
+      try {
+        const props = {
+          resume: {
+            ...resume,
+            skills: Array.isArray(resume.skills) ? resume.skills : [],
+            experience: Array.isArray(resume.experience) ? resume.experience : [],
+            education: Array.isArray(resume.education) ? resume.education : [],
+          }
+        };
+    
+        const templates = {
+          template1: Template1,
+          template2: Template2,
+          template3: Template3,
+          template4: Template4,
+          default: MyDocument
+        };
+    
+        const SelectedTemplate = templates[selectedTemplate] || templates.default;
+        return <SelectedTemplate {...props} />;
+      } catch (error) {
+        console.error("Error rendering template:", error);
+        return <Template1 resume={resume} />;
+      }
+    };
+    
 
-    switch (selectedTemplate) {
-      case "template1":
-        return <Template1 {...props} />;
-      case "template2":
-        return <Template2 {...props} />;
-      default:
-        return <MyDocument {...props} />;
-    }
+     // Handle template change
+  const handleTemplateChange = (newTemplate) => {
+    setSelectedTemplate(newTemplate);
+    setPdfKey(prevKey => prevKey + 1); // Force PDF refresh
   };
+
   // Fetch AI feedback when summary changes
   useEffect(() => {
     if (resume.summary.trim()) {
@@ -62,27 +85,27 @@ const ResumeBuilder = () => {
   // Fetch resume data if editing
   useEffect(() => {
     if (id) {
-        const fetchResume = async () => {
-            try {
-                console.log("Fetching resume with ID:", id); // Debugging log
-                const res = await axios.get(`${backend_url}/api/resumes/${id}`, {
-                    headers: {
-                        "x-auth-token": localStorage.getItem("token"),
-                    },
-                });
-                console.log("Resume data fetched:", res.data); // Debugging log
-                setResume(res.data.sections); // Populate form with existing data
-                setSelectedTemplate(res.data.templateId); // Set the template
-            } catch (err) {
-                console.error(
-                    "Error fetching resume:",
-                    err.response?.data || err.message
-                );
-            }
-        };
-        fetchResume();
+      const fetchResume = async () => {
+        try {
+          console.log("Fetching resume with ID:", id);
+          const res = await axios.get(`${backend_url}/api/resumes/${id}`, {
+            headers: {
+              "x-auth-token": localStorage.getItem("token"),
+            },
+          });
+          console.log("Resume data fetched:", res.data);
+          setResume(res.data.sections);
+          setSelectedTemplate(res.data.templateId);
+        } catch (err) {
+          console.error(
+            "Error fetching resume:",
+            err.response?.data || err.message
+          );
+        }
+      };
+      fetchResume();
     }
-}, [id]);
+  }, [id]);
 
   // Function to get AI feedback
   const getAIFeedback = async (content) => {
@@ -112,56 +135,65 @@ const ResumeBuilder = () => {
   };
 
   // Handle form submission
-      // Handle form submission (create or update resume)
-      const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (!resume || !resume.name || !resume.email) {
-            console.error("Resume data is incomplete.");
-            return;
-        }
-    
-        try {
-            const url = id ? `${backend_url}/api/resumes/${id}` : `${backend_url}/api/resumes`; // Use PUT for update, POST for create
-            const method = id ? "put" : "post";
-            
-            const res = await axios({
-                method: method,
-                url: url,
-                data: {
-                    templateId: selectedTemplate,
-                    sections: resume,
-                },
-                headers: {
-                    "x-auth-token": localStorage.getItem("token"),
-                    "Content-Type": "application/json",
-                },
-            });
-    
-            console.log("Resume saved:", res.data);
-            navigate("/dashboard");
-        } catch (err) {
-            console.error("Error saving resume:", err.response?.data?.msg || err.message);
-        }
-    };
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  const templateComponents = {
-    template1: Template1,
-    template2: Template2,
-    template3: Template3,
-    template4: Template4,
+    if (!resume || !resume.name || !resume.email) {
+      console.error("Resume data is incomplete.");
+      return;
+    }
+
+    try {
+      const url = id
+        ? `${backend_url}/api/resumes/${id}`
+        : `${backend_url}/api/resumes`;
+      const method = id ? "put" : "post";
+
+      const res = await axios({
+        method: method,
+        url: url,
+        data: {
+          templateId: selectedTemplate,
+          sections: resume,
+        },
+        headers: {
+          "x-auth-token": localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Resume saved:", res.data);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(
+        "Error saving resume:",
+        err.response?.data?.msg || err.message
+      );
+    }
   };
 
-  const getTemplateComponent = (templateName) => {
-    return templateComponents[templateName];
+  // Function to remove experience
+  const handleRemoveExperience = (indexToRemove) => {
+    setResume(prevResume => ({
+      ...prevResume,
+      experience: prevResume.experience.filter((_, index) => index !== indexToRemove),
+    }));
+    setPdfKey(prevKey => prevKey + 1); // Force re-render of PDF
   };
+  
 
-  const SelectedTemplate = getTemplateComponent();
+  // Function to remove education
+  const handleRemoveEducation = (indexToRemove) => {
+    setResume(prevResume => ({
+      ...prevResume,
+      education: prevResume.education.filter((_, index) => index !== indexToRemove),
+    }));
+    setPdfKey(prevKey => prevKey + 1); // Force re-render of PDF
+  };
+  
 
   return (
     <div className="resume-builder-container">
-      {/* Your existing header */}
       <header className="header">
         <div className="logo">ResumeGenius</div>
         <nav className="nav">
@@ -177,7 +209,6 @@ const ResumeBuilder = () => {
       <main className="main-content">
         <h1 className="main-title">Resume Builder</h1>
 
-        {/* Template selection */}
         <div className="template-selection">
           <h2>Select Template</h2>
           <div className="template-options">
@@ -185,7 +216,7 @@ const ResumeBuilder = () => {
               className={`template-button ${
                 selectedTemplate === "template1" ? "active" : ""
               }`}
-              onClick={() => setSelectedTemplate("template1")}
+              onClick={() => handleTemplateChange("template1")}
             >
               Professional Classic
             </button>
@@ -193,7 +224,7 @@ const ResumeBuilder = () => {
               className={`template-button ${
                 selectedTemplate === "template2" ? "active" : ""
               }`}
-              onClick={() => setSelectedTemplate("template2")}
+              onClick={() => handleTemplateChange("template2")}
             >
               Modern Clean
             </button>
@@ -201,7 +232,7 @@ const ResumeBuilder = () => {
               className={`template-button ${
                 selectedTemplate === "template3" ? "active" : ""
               }`}
-              onClick={() => setSelectedTemplate("template3")}
+              onClick={() => handleTemplateChange("template3")}
             >
               Modern Split
             </button>
@@ -209,7 +240,7 @@ const ResumeBuilder = () => {
               className={`template-button ${
                 selectedTemplate === "template4" ? "active" : ""
               }`}
-              onClick={() => setSelectedTemplate("template4")}
+              onClick={() => handleTemplateChange("template4")}
             >
               Executive Minimal
             </button>
@@ -217,7 +248,6 @@ const ResumeBuilder = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="resume-form">
-          {/* Existing form sections remain unchanged */}
           <div className="form-section">
             <h2>Personal Information</h2>
             <input
@@ -288,17 +318,26 @@ const ResumeBuilder = () => {
             <h2>Work Experience</h2>
             {resume.experience.map((exp, index) => (
               <div key={index} className="experience-item">
-                <input
-                  type="text"
-                  placeholder="Job Title"
-                  value={exp.title}
-                  onChange={(e) => {
-                    const updatedExperience = [...resume.experience];
-                    updatedExperience[index].title = e.target.value;
-                    setResume({ ...resume, experience: updatedExperience });
-                  }}
-                  required
-                />
+                <div className="experience-header">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExperience(index)}
+                    className="remove-button"
+                  >
+                    Remove
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Job Title"
+                    value={exp.title}
+                    onChange={(e) => {
+                      const updatedExperience = [...resume.experience];
+                      updatedExperience[index].title = e.target.value;
+                      setResume({ ...resume, experience: updatedExperience });
+                    }}
+                    required
+                  />
+                </div>
                 <input
                   type="text"
                   placeholder="Company"
@@ -354,17 +393,26 @@ const ResumeBuilder = () => {
             <h2>Education</h2>
             {resume.education.map((edu, index) => (
               <div key={index} className="education-item">
-                <input
-                  type="text"
-                  placeholder="Degree"
-                  value={edu.degree}
-                  onChange={(e) => {
-                    const updatedEducation = [...resume.education];
-                    updatedEducation[index].degree = e.target.value;
-                    setResume({ ...resume, education: updatedEducation });
-                  }}
-                  required
-                />
+                <div className="education-header">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveEducation(index)}
+                    className="remove-button"
+                  >
+                    Remove
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Degree"
+                    value={edu.degree}
+                    onChange={(e) => {
+                      const updatedEducation = [...resume.education];
+                      updatedEducation[index].degree = e.target.value;
+                      setResume({ ...resume, education: updatedEducation });
+                    }}
+                    required
+                  />
+                </div>
                 <input
                   type="text"
                   placeholder="Institution"
@@ -411,9 +459,10 @@ const ResumeBuilder = () => {
           </button>
         </form>
 
-        {/* PDF download with selected template */}
-        {resume.name && ( // Only show download button when there's content
+       {/* Update the PDF download section */}
+        {resume.name && (
           <PDFDownloadLink
+            key={pdfKey} // Add this key prop
             document={renderTemplate()}
             fileName="resume.pdf"
             className="pdf-button"
