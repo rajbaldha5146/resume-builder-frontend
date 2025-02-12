@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background-color: #FFFFFF;
+    background-color: #f8f9fa;
     color: #333333;
     line-height: 1.6;
 }
@@ -12,6 +12,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    transition: all 0.3s ease;
 }
 
 /* Header */
@@ -20,15 +21,14 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
-    background-color: #007BFF;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #1a1a2e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .logo {
     font-size: 24px;
     font-weight: bold;
-    color: #FFFFFF;
-    letter-spacing: 1px;
+    color: #ffffff;
 }
 
 .nav {
@@ -38,17 +38,13 @@ body {
 
 .nav-link {
     text-decoration: none;
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: 500;
     transition: all 0.3s ease;
-    padding: 5px 10px;
-    border-radius: 5px;
 }
 
 .nav-link:hover {
-    color: #5BC0EB;
-    background-color: rgba(91, 192, 235, 0.1);
-    transform: translateY(-2px);
+    color: #007bff;
 }
 
 /* Main Content */
@@ -64,102 +60,98 @@ body {
 
 .main-title {
     font-size: 36px;
-    font-weight: 700;
-    color: #007BFF;
+    font-weight: bold;
+    color: #1a1a2e;
     margin-bottom: 20px;
-    letter-spacing: 1px;
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
     width: 100%;
     max-width: 400px;
-    background-color: #FFFFFF;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .login-form:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
 .login-form input {
     padding: 12px;
     font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
     outline: none;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .login-form input:focus {
-    border-color: #007BFF;
+    border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .submit-button {
     padding: 12px;
-    background: linear-gradient(135deg, #007BFF, #0056b3);
-    color: #FFFFFF;
+    background-color: #ff9800;
+    color: #ffffff;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: bold;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    width: 100%;
 }
 
 .submit-button:hover {
-    background: linear-gradient(135deg, #0056b3, #007BFF);
+    background-color: #f57c00;
     transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
 }
 
 .signup-link {
     margin-top: 20px;
-    color: #333333;
-    font-size: 14px;
+    color: #666;
 }
 
 .signup-link a {
-    color: #007BFF;
-    font-weight: 500;
+    color: #007bff;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .signup-link a:hover {
-    color: #5BC0EB;
-    text-decoration: underline;
+    color: #0056b3;
+    text-decoration: none;
 }
 
 /* Footer */
 .footer {
     text-align: center;
     padding: 20px;
-    background-color: #007BFF;
-    color: #FFFFFF;
+    background-color: #1a1a2e;
+    color: #ffffff;
     margin-top: auto;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
-        align-items: flex-start;
-        padding: 20px;
+        align-items: center;
+        padding: 15px;
     }
 
     .nav {
-        margin-top: 10px;
+        margin-top: 15px;
         flex-wrap: wrap;
+        justify-content: center;
     }
 
     .main-title {
@@ -167,7 +159,22 @@ body {
     }
 
     .login-form {
-        padding: 20px;
+        padding: 1.5rem;
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form {
+        padding: 1rem;
+    }
+
+    .main-title {
+        font-size: 24px;
+    }
+
+    .submit-button {
+        padding: 10px;
     }
 }
 
@@ -182,7 +189,7 @@ body {
 /* Add this to your Login.css file */
 .loader {
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border-top: 4px solid #007bff;
     border-radius: 50%;
     width: 30px;
     height: 30px;
